@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface BillionaireRepository extends CrudRepository<Billionaire, Long> {
 
-    public List<Billionaire> findAllByOrderByNameAsc();
+
 }

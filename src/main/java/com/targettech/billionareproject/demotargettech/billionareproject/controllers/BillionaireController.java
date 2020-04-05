@@ -2,6 +2,7 @@ package com.targettech.billionareproject.demotargettech.billionareproject.contro
 import javax.validation.Valid;
 
 import com.targettech.billionareproject.demotargettech.billionareproject.entities.Billionaire;
+import com.targettech.billionareproject.demotargettech.billionareproject.entities.BillionaireNetWorthComparator;
 import com.targettech.billionareproject.demotargettech.billionareproject.repositories.BillionaireRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 public class BillionaireController {
@@ -39,9 +44,16 @@ public class BillionaireController {
         }
 
        billionaireRepository.save(billionaire);
-        model.addAttribute("billionaires", billionaireRepository.findAllByOrderByNameAsc());
-        System.out.println("billionaires111 ");
 
+        List<Billionaire> billionairesList = new ArrayList<>();
+        Iterable<Billionaire> billionaires = billionaireRepository.findAll();
+        for(Billionaire b: billionaires) {
+            billionairesList.add(b);
+        }
+        billionairesList.sort(new BillionaireNetWorthComparator());
+        model.addAttribute("billionaires",billionairesList);
+
+        System.out.println("billionaires111 ");
         return "index";
     }
 
@@ -60,8 +72,10 @@ public class BillionaireController {
         }
 
         billionaireRepository.save(billionaire);
+        System.out.println("Bill2");
         model.addAttribute("billionaire", billionaireRepository.findAll());
         return "index";
+
     }
 
     @GetMapping("/deleteBillionaire/{id}")

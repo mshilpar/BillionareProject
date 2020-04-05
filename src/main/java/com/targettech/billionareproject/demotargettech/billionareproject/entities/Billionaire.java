@@ -5,7 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Billionaire {
@@ -15,19 +17,16 @@ public class Billionaire {
     private long id;
     @NotBlank(message = "Name is mandatory")
     private String name;
-    @NotBlank(message = "Rank is mandatory")
-    private String rank;
-    @NotBlank(message = "netWorth is mandatory")
-    private String netWorth;
+    @NotNull(message = "netWorth is mandatory")
+    private Double netWorth;
     @NotBlank(message = "companiesOwned is mandatory")
     private String companiesOwned;
 
     public Billionaire() {}
 
-    public Billionaire(long id, @NotBlank(message = "Name is mandatory") String name, @NotBlank(message = "Rank is mandatory") String rank, @NotBlank(message = "netWorth is mandatory") String netWorth, @NotBlank(message = "companiesOwned is mandatory") String companiesOwned) {
+    public Billionaire(long id, @NotBlank(message = "Name is mandatory") String name, @NotNull(message = "netWorth is mandatory") Double netWorth, @NotBlank(message = "companiesOwned is mandatory") String companiesOwned) {
         this.id = id;
         this.name = name;
-        this.rank = rank;
         this.netWorth = netWorth;
         this.companiesOwned = companiesOwned;
     }
@@ -48,19 +47,12 @@ public class Billionaire {
         this.name = name;
     }
 
-    public String getRank() {
-        return rank;
-    }
 
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
-
-    public String getNetWorth() {
+    public Double getNetWorth() {
         return netWorth;
     }
 
-    public void setNetWorth(String netWorth) {
+    public void setNetWorth(Double netWorth) {
         this.netWorth = netWorth;
     }
 
@@ -77,12 +69,8 @@ public class Billionaire {
         return "Billionaire{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", rank='" + rank + '\'' +
-                ", netWorth='" + netWorth + '\'' +
+                ", netWorth=" + netWorth +
                 ", companiesOwned='" + companiesOwned + '\'' +
                 '}';
     }
-
-
-
 }
