@@ -17,6 +17,11 @@
             <form action="#" th:action="@{/addBillionaire}" th:object="${billionaire}" method="post">
                 <div class="row">
                     <div class="form-group col-md-8">
+                        <label for="pic" class="col-form-label">Picture</label>
+                        <input type="text" th:field="*{pic}" class="form-control" id="pic" placeholder="pic">
+                        <span th:if="${#fields.hasErrors('pic')}" th:errors="*{pic}" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-8">
                         <label for="name" class="col-form-label">Name</label>
                         <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="Name">
                         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>

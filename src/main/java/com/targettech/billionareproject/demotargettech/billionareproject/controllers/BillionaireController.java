@@ -1,9 +1,11 @@
 package com.targettech.billionareproject.demotargettech.billionareproject.controllers;
 import javax.validation.Valid;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.targettech.billionareproject.demotargettech.billionareproject.entities.Billionaire;
-import com.targettech.billionareproject.demotargettech.billionareproject.entities.BillionaireNetWorthComparator;
-import com.targettech.billionareproject.demotargettech.billionareproject.repositories.BillionaireRepository;
+import com.targettech.billionareproject.demotargettech.billionareproject.service.BillionaireServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,17 +21,16 @@ import java.util.List;
 @Controller
 public class BillionaireController {
 
-    private final BillionaireRepository billionaireRepository;
+    private final BillionaireServices billionaireServices;
 
     @Autowired
-    public BillionaireController(BillionaireRepository billionaireRepository) {
-        this.billionaireRepository = billionaireRepository;
+    public BillionaireController(BillionaireServices billionaireServices) {
+        this.billionaireServices = billionaireServices;
     }
 
     @GetMapping("/")
     public String showBillionaires(Model model) {
-        model.addAttribute("billionaire",billionaireRepository.findAll());
-      return "index";
+        return loadBillionaire(model);
     }
 
     @GetMapping("/addBillionaire")
@@ -43,25 +44,19 @@ public class BillionaireController {
             return "add-billionaire";
         }
 
-       billionaireRepository.save(billionaire);
+       billionaireServices.saveBillionaire(billionaire);
 
-        List<Billionaire> billionairesList = new ArrayList<>();
-        Iterable<Billionaire> billionaires = billionaireRepository.findAll();
-        for(Billionaire b: billionaires) {
-            billionairesList.add(b);
-        }
-        billionairesList.sort(new BillionaireNetWorthComparator());
-        model.addAttribute("billionaires",billionairesList);
-
-        System.out.println("billionaires111 ");
+        model.addAttribute("billionaires", billionaireServices.sortedBillionaireList());
         return "index";
     }
 
     @GetMapping("/updateBillionaire/{id}")
     public String showUpdateBillionaireForm(@PathVariable("id") long id, Model model) {
-        Billionaire billionaire = billionaireRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid billionaire Id:" + id));
-        model.addAttribute("billionaire", billionaire);
-        return "update-billionaire";
+
+            Billionaire billionaire = billionaireServices.findBillionaireById(id);
+            model.addAttribute("billionaire", billionaire);
+            return "update-billionaire";
+
     }
 
     @PostMapping("/updateBillionaire/{id}")
@@ -71,18 +66,22 @@ public class BillionaireController {
             return "update-billionaire";
         }
 
-        billionaireRepository.save(billionaire);
+        billionaireServices.saveBillionaire(billionaire);
         System.out.println("Bill2");
-        model.addAttribute("billionaire", billionaireRepository.findAll());
-        return "index";
+        return loadBillionaire(model);
 
     }
 
     @GetMapping("/deleteBillionaire/{id}")
     public String deleteBillionaire(@PathVariable("id") long id, Model model) {
-        Billionaire billionaire = billionaireRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid billionaire Id:" + id));
-        billionaireRepository.delete(billionaire);
-        model.addAttribute("billionaire", billionaireRepository.findAll());
+        Billionaire billionaire = billionaireServices.findBillionaireById(id);
+        billionaireServices.deleteBillionaire(billionaire);
+        return loadBillionaire(model);
+    }
+
+    public String loadBillionaire(Model model){
+        model.addAttribute("billionaire", billionaireServices.sortedBillionaireList());
         return "index";
     }
+
 }
